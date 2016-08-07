@@ -5,13 +5,14 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--filename', help='Filename of the file to be staticfied', required=True)
-parser.add_argument('--static-url', help='static url without / i.e static/ == static', required=True)
+parser.add_argument('--static-endpoint', help='static endpoint which is usually == "static"')
 parser.add_argument('--template-folder', help='template folder that contains the html file(s)')
 args = parser.parse_args()
 
 
 results = []  # list that holds the links, images and scripts as they're found by BeautifulSoup
-static_url = args.static_url
+static_url = args.static_endpoint
+static_url = static_url if static_url else 'static' # fall back to the default static if no endpoint is specified
 template_folder = args.template_folder
 
 filename = args.filename
@@ -65,4 +66,4 @@ with open(in_file, 'r') as input_file, open(out_file, 'w') as output_file:
     print('staticfied \033[94m{} ==> \033[92m{}\n'.format(in_file, out_file))
 
     # reset the terminal color back to it's normal color
-    os.system('cls||reset')  # dunno about windows ¯\_(ツ)_/¯
+    # os.system('cls||reset')  # dunno about windows ¯\_(ツ)_/¯
