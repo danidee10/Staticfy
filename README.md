@@ -1,5 +1,5 @@
 # Staticfy
-Automatically convert hardlinks in your html file to a dynamic flask static url
+Automatically convert hardlinks in your html file to a dynamic flask url
 
 # Usage
  `./staticfy.py --filename=home.html --static-endpoint=static --template-folder='templates'`
