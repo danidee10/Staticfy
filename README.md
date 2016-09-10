@@ -15,7 +15,7 @@ Before staticfy
 After staticfy
 ![alt tag](assets/after.png)
 
-Notice how it preserves the font-awesome css link at the top of the file, staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint, you can also specify a `--template-folder` where your html template is located, instead of chunking the file location into the filename argument
+Notice how it preserves the font-awesome css link at the top of the file ?, external resources (font-awesome, google-fonts, bootstrap files, disqus e.t.c) which aren't hosted locally with your website won't be staticfied. Staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint, you can also specify a `--template-folder` where your html template is located, instead of chunking the file location into the filename argument
  
 # Requirements and 3rd party stuff
 Beautiful soup 4
