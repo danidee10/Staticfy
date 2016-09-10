@@ -68,7 +68,7 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
                     output_file.write(file_line)
                     break
             else:
-                # print(file_line)
+                # print(file_line) --verbose option
                 output_file.write(file_line)
 
         print('staticfied \033[94m{} ==> \033[92m{}\n'.format(in_file, out_file))
@@ -76,7 +76,8 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
         return out_file
 
         # reset the terminal color back to it's normal color
-        # os.system('cls||reset')  # dunno about windows ¯\_(ツ)_/¯
+        # no need for this in zsh
+        # os.system('cls||reset') should work for bash  # dunno about windows ¯\_(ツ)_/¯
 
 if __name__ == '__main__':
     parse_cmd_arguments()
