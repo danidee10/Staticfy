@@ -16,7 +16,12 @@ After staticfy
 ![alt tag](assets/after.png)
 
 Notice how it preserves the font-awesome css link at the top of the file ?, external resources (font-awesome, google-fonts, bootstrap files, disqus e.t.c) which aren't hosted locally with your website won't be staticfied. Staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint, you can also specify a `--template-folder` where your html template is located, instead of chunking the file location into the filename argument
+
+# Tests
+The tests are located in the `test.py` file and can be run with
+`./test.py`
  
 # Requirements and 3rd party stuff
 Beautiful soup 4
-`pip3 install bs4` or you can use the requirements file `pip3 install -r requirements.txt`
+`pip3 install bs4` 
+or you can use the requirements file `pip3 install -r requirements.txt`
