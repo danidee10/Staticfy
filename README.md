@@ -7,7 +7,7 @@ with Staticfy you can save that time (and some of your hair) by automatically co
 # Usage
 `./staticfy.py --filename=staticfy.html --static-endpoint=static --template-folder='templates'`
  
- --static-endpoint and --template-folder are optional
+ `--static-endpoint` and `--template-folder are optional`
  
 Before staticfy
 ![alt tag](assets/before.png)
