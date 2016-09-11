@@ -6,7 +6,7 @@ import argparse
 
 def parse_cmd_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--filename', help='Filename of the file to be staticfied', required=True)
+    parser.add_argument('filename', type=str, help='Filename of the file to be staticfied')
     parser.add_argument('--static-endpoint', help='static endpoint which is usually == "static"')
     parser.add_argument('--template-folder', help='template folder that contains the html file(s)')
     args = parser.parse_args()
@@ -55,7 +55,6 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
     filename = filename.split(os.path.sep)[-1] # incase filename is a link to a path
 
     out_file = os.path.join('staticfy', filename)
-    print(out_file, 'hello world')
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
 
     with open(in_file, 'r') as input_file, open(out_file, 'w+') as output_file:
