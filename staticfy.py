@@ -7,8 +7,8 @@ import argparse
 
 def parse_cmd_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', type=str, nargs='?', help='Filename of the file to be staticfied')
-    parser.add_argument('--static-endpoint', help='static endpoint which is usually == "static"')
+    parser.add_argument('filename', type=str, nargs='?', default='', help='Filename of the file to be staticfied')
+    parser.add_argument('--static-endpoint', help='static endpoint which is "static" by default')
     parser.add_argument('--template-folder', help='template folder that contains the html file(s)')
     args = parser.parse_args()
 
@@ -16,9 +16,15 @@ def parse_cmd_arguments():
 
     if not filename and template_folder:
         # get all the files in the folder and staticfy them
-        for file in os.scandir(template_folder):
-            if file.name.endswith(('htm', 'html')) and file.is_file():
-                staticfy(file.name, static_endpoint=static_endpoint, template_folder=template_folder)
+        try:
+            for file in os.scandir(template_folder):
+                if file.name.endswith(('htm', 'html')) and file.is_file():
+                    staticfy(file.name, static_endpoint=static_endpoint, template_folder=template_folder)
+        except (FileNotFoundError, NotADirectoryError) as e:
+            print('\033[91m' + 'Directory not found' + '\033[0m')
+
+    elif not filename and not template_folder:
+        parser.print_help()
     else:
         staticfy(filename, static_endpoint=static_endpoint, template_folder=template_folder)
 
@@ -34,7 +40,7 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
 
     try:
         file_handle = open(in_file)
-    except FileNotFoundError as e:
+    except (FileNotFoundError, IsADirectoryError) as e:
         print('\033[91m' + 'File not found' + '\033[0m')
         sys.exit(1)
 
