@@ -34,3 +34,12 @@ The tests are located in the `test.py` file and can be run with
 Beautiful soup 4
 `pip3 install bs4`
 or you can use the requirements file `pip3 install -r requirements.txt`
+
+if you have issues with importing HTML.parser on python 3.5, run this
+`pip install --upgrade beautifulsoup4`
+
+# Contribution
+Pull requests and issues are welcome, if you're making a pull request, make sure
+you respect the surrounding code style and write tests to show that your code
+works, in your PR and commit also describe clearly what your PR attempts to
+fix/improve/add
