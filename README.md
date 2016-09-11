@@ -2,7 +2,7 @@
 Have you ever been annoyed by the amount of time you spend manually changing the links in a html template you bought or downloaded until all the static files and assets are properly linked and the file looks exactly like the demo you saw online?
 with Staticfy you can save that time (and some of your hair) by automatically converting the static urls in your template to dynamic flask url's that wouldn't break if you decide to move your file to another location.
 
-`<img src="img/staticfy.jpg" />` -----> `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
+`<img src="img/staticfy.jpg" />` ===> `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
 # Usage
 `./staticfy.py staticfy.html --static-endpoint=static --template-folder='templates'`
