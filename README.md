@@ -5,10 +5,10 @@ with Staticfy you can save that time (and some of your hair) by automatically co
 `<img src="img/staticfy.jpg" />` -----> `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
 # Usage
-`./staticfy.py --filename=staticfy.html --static-endpoint=static --template-folder='templates'`
+`./staticfy.py staticfy.html --static-endpoint=static --template-folder='templates'`
  
  `--static-endpoint` and `--template-folder` are optional
- 
+
 Before staticfy
 ![alt tag](assets/before.png)
 ---------------------------------------------------------------------------------------------------------------------------------
@@ -22,8 +22,8 @@ When you run staticfy on a template, a staticfy folder is generated in the prese
 # Tests
 The tests are located in the `test.py` file and can be run with
 `./test.py`
- 
+
 # Requirements and 3rd party stuff
 Beautiful soup 4
-`pip3 install bs4` 
+`pip3 install bs4`
 or you can use the requirements file `pip3 install -r requirements.txt`
