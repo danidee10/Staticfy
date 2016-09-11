@@ -9,7 +9,8 @@ class StaticfyTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.filename = 'test.html'
-        data = ("""<img src="images/staticfy.jpg" />\n"""
+        data = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                """<img src="images/staticfy.jpg" />\n"""
                 """<link rel="stylesheet" href="css/style.css" />\n"""
                 """<script src="js/script.js">alert('hello world')</script>\n"""
                 )
@@ -23,7 +24,8 @@ class StaticfyTest(unittest.TestCase):
         with open(out_file, 'r') as f:
             file_contents = f.read()
 
-            expected_result = ("""<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
                                """<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />\n"""
                                """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
                                )
@@ -36,15 +38,12 @@ class StaticfyTest(unittest.TestCase):
         with open(out_file, 'r') as f:
             file_contents = f.read()
 
-            expected_result = ("""<img src="{{ url_for('my_static', filename='images/staticfy.jpg') }}" />\n"""
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="{{ url_for('my_static', filename='images/staticfy.jpg') }}" />\n"""
                                """<link rel="stylesheet" href="{{ url_for('my_static', filename='css/style.css') }}" />\n"""
                                """<script src="{{ url_for('my_static', filename='js/script.js') }}">alert("hello world")</script>\n"""
                                )
             self.assertEqual(file_contents, expected_result)
-
-
-    def test_template_folder_creation(self):
-        pass
 
     @classmethod
     def tearDownClass(cls):
