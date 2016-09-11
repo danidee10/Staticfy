@@ -1,3 +1,6 @@
+### Status
+[![Build Status](https://travis-ci.org/danidee10/Staticfy.svg?branch=master)](https://travis-ci.org/danidee10/Staticfy)
+
 # Staticfy
 Have you ever been annoyed by the amount of time you spend manually changing the links in a html template you bought or downloaded until all the static files and assets are properly linked and the file looks exactly like the demo you saw online?
 with Staticfy you can save that time (and some of your hair) by automatically converting the static urls in your template to dynamic flask url's that wouldn't break if you decide to move your file to another location.
@@ -9,10 +12,10 @@ with Staticfy you can save that time (and some of your hair) by automatically co
 
  `--static-endpoint` and `--template-folder` are optional
 
-Before Staticfying
+### Before Staticfying
 ![alt tag](assets/before.png)
 ---------------------------------------------------------------------------------------------------------------------------------
-After Staticfying
+### After Staticfying
 ![alt tag](assets/after.png)
 
 Notice how it preserves the font-awesome css link at the top of the file?, external resources (font-awesome, google-fonts, bootstrap files, disqus e.t.c) which aren't hosted locally with your website won't be staticfied. Staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint, you can also specify a `--template-folder` where your html template is located, instead of chunking the file location into the filename argument.
