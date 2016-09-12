@@ -8,7 +8,16 @@ with Staticfy you can save that time (and some of your hair) by automatically co
 `<img src="img/staticfy.jpg" />` ===> `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
 # Usage
-`./staticfy.py staticfy.html --static-endpoint=static --template-folder='templates'`
+make the script executable with
+`sudo chmod +x staticfy.py`
+
+and run it
+
+`./staticfy.py staticfy.html --static-endpoint=static --template-folder=templates`
+
+using `./` runs Staticfy with python3, if you're running windows or you want to use another version of python e.g python2, you can just run
+
+`python2 staticfy.py staticfy.html --static-endpoint=static --template-folder=templates`
 
  `--static-endpoint` and `--template-folder` are optional
 
