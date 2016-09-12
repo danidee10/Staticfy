@@ -3,7 +3,7 @@
 import unittest
 import os
 import shutil
-from staticfy import staticfy
+from staticfy import staticfy, StaticfyError
 
 class StaticfyTest(unittest.TestCase):
     @classmethod
@@ -44,6 +44,12 @@ class StaticfyTest(unittest.TestCase):
                                """<script src="{{ url_for('my_static', filename='js/script.js') }}">alert("hello world")</script>\n"""
                                )
             self.assertEqual(file_contents, expected_result)
+
+    def test_filenotfound_exception(self):
+        self.assertRaises(StaticfyError, staticfy, 'Invalid file')
+
+    def test_dirnotfound_exception(self):
+        self.assertRaises(StaticfyError, staticfy, self.filename, template_folder='Invalid directory')
 
     @classmethod
     def tearDownClass(cls):

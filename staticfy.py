@@ -3,7 +3,31 @@ from bs4 import BeautifulSoup
 import sys
 import re
 import os
+import errno
 import argparse
+
+# test to see if we're running python2 or python3, to set FileNotFoundError
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+class StaticfyError(Exception):
+    """custom exception class to properly handle IOError(for testing) when it is raised"""
+    def __init__(self, message):
+        self.message = message
+
+        super(StaticfyError, self).__init__(message)
+
+def makedir(path):
+    # function to emulate exist_ok in Python >3.3 which works like mkdir -p in linux
+    try:
+        os.makedirs(path)
+    except OSError as e:  # Python >2.5
+        if e.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 def parse_cmd_arguments():
     parser = argparse.ArgumentParser()
@@ -17,16 +41,21 @@ def parse_cmd_arguments():
     if not filename and template_folder:
         # get all the files in the folder and staticfy them
         try:
-            for file in os.scandir(template_folder):
-                if file.name.endswith(('htm', 'html')) and file.is_file():
-                    staticfy(file.name, static_endpoint=static_endpoint, template_folder=template_folder)
-        except (FileNotFoundError, NotADirectoryError) as e:
-            print('\033[91m' + 'Directory not found' + '\033[0m')
+            for file in os.listdir(template_folder):
+                if file.endswith(('htm', 'html')) and os.path.isfile(template_folder + '/' + file):
+                    staticfy(file, static_endpoint=static_endpoint, template_folder=template_folder)
+        except OSError:
+            print('\033[91m' + 'Unable to read or find the specified directory' + '\033[0m')
 
     elif not filename and not template_folder:
         parser.print_help()
     else:
-        staticfy(filename, static_endpoint=static_endpoint, template_folder=template_folder)
+        try:
+            staticfy(filename, static_endpoint=static_endpoint, template_folder=template_folder)
+        except StaticfyError as e:
+            # if the file wasn't found or couldn't be read hide the traceback and print the error message
+            sys.tracebacklimit = 0
+            print(e.message)
 
 
 
@@ -40,9 +69,8 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
 
     try:
         file_handle = open(in_file)
-    except (FileNotFoundError, IsADirectoryError) as e:
-        print('\033[91m' + 'File not found' + '\033[0m')
-        sys.exit(1)
+    except FileNotFoundError:
+        raise StaticfyError('\033[91m' + 'Unable to read or find the specified file' + '\033[0m')
 
     html_doc = BeautifulSoup(file_handle, 'html.parser')
 
@@ -75,7 +103,7 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
     filename = filename.split(os.path.sep)[-1] # incase filename is a link to a path
 
     out_file = os.path.join('staticfy', filename)
-    os.makedirs(os.path.dirname(out_file), exist_ok=True)
+    makedir(os.path.dirname(out_file))
 
     with open(in_file, 'r') as input_file, open(out_file, 'w+') as output_file:
         for file_line in input_file:
@@ -87,7 +115,6 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
                     output_file.write(file_line)
                     break
             else:
-                # print(file_line) --verbose option
                 output_file.write(file_line)
 
         print('staticfied \033[94m{} ==> \033[92m{}\033[0m\n'.format(in_file, out_file))
