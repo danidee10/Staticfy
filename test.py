@@ -3,7 +3,13 @@
 import unittest
 import os
 import shutil
-from staticfy import staticfy, StaticfyError
+from staticfy import staticfy
+
+# check if we're running python2 or python3, to set FileNotFoundError
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
 
 class StaticfyTest(unittest.TestCase):
     @classmethod
@@ -11,6 +17,7 @@ class StaticfyTest(unittest.TestCase):
         cls.filename = 'test.html'
         data = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                 """<img src="images/staticfy.jpg" />\n"""
+                """<img data-url="images/staticfy.jpg" />\n"""
                 """<link rel="stylesheet" href="css/style.css" />\n"""
                 """<script src="js/script.js">alert('hello world')</script>\n"""
                 )
@@ -26,6 +33,7 @@ class StaticfyTest(unittest.TestCase):
 
             expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                                """<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
+                               """<img data-url="images/staticfy.jpg" />\n"""
                                """<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />\n"""
                                """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
                                )
@@ -40,16 +48,28 @@ class StaticfyTest(unittest.TestCase):
 
             expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                                """<img src="{{ url_for('my_static', filename='images/staticfy.jpg') }}" />\n"""
+                               """<img data-url="images/staticfy.jpg" />\n"""
                                """<link rel="stylesheet" href="{{ url_for('my_static', filename='css/style.css') }}" />\n"""
                                """<script src="{{ url_for('my_static', filename='js/script.js') }}">alert("hello world")</script>\n"""
                                )
             self.assertEqual(file_contents, expected_result)
 
-    def test_filenotfound_exception(self):
-        self.assertRaises(StaticfyError, staticfy, 'Invalid file')
+    def test_additional_tags(self):
+        out_file = staticfy(self.filename, add_tags={'img': 'data-url'})
 
-    def test_dirnotfound_exception(self):
-        self.assertRaises(StaticfyError, staticfy, self.filename, template_folder='Invalid directory')
+        with open(out_file, 'r') as f:
+            file_contents = f.read()
+
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
+                               """<img data-url="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
+                               """<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />\n"""
+                               """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
+                               )
+            self.assertEqual(file_contents, expected_result)
+
+    def test_filenotfound_exception(self):
+        self.assertRaises(FileNotFoundError, staticfy, 'Invalid file')
 
     @classmethod
     def tearDownClass(cls):
