@@ -9,17 +9,22 @@ with Staticfy you can save that time (and some of your hair) by automatically co
 
 # Usage
 make the script executable with
-`sudo chmod +x staticfy.py`
+```bash
+sudo chmod +x staticfy.py`
+```
 
 and run it
-
-`./staticfy.py staticfy.html --static-endpoint=static --template-folder=templates`
+```bash
+./staticfy.py staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'`
+```
 
 using `./` runs Staticfy with python3, if you're running windows or you want to use another version of python e.g python2, you can just run
 
-`python2 staticfy.py staticfy.html --static-endpoint=static --template-folder=templates`
+```bash
+python2 staticfy.py staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'`
+```
 
- `--static-endpoint` and `--template-folder` are optional
+ `--static-endpoint` and `--add-tags` are optional
 
 ### Before Staticfying
 ![alt tag](assets/before.png)
@@ -27,14 +32,37 @@ using `./` runs Staticfy with python3, if you're running windows or you want to 
 ### After Staticfying
 ![alt tag](assets/after.png)
 
-Notice how it preserves the font-awesome css link at the top of the file?, external resources (font-awesome, google-fonts, bootstrap files, disqus e.t.c) which aren't hosted locally with your website won't be staticfied. Staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint, you can also specify a `--template-folder` where your html file is located, instead of chunking the file location into the filename argument.
+Notice how it preserves the font-awesome css link at the top of the file?, external resources (images, scripts, font-awesome, google-fonts, bootstrap files, disqus e.t.c) which aren't hosted locally with your website won't be staticfied. Staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint.
 
-Staticy also preserves the indentation and formatting of any html file given to it
+Staticy also preserves the indentation and formatting of any html file given to it, so your html file(s) are still look the same way and are still readablebe just the way they were before you staticfied them.
 
 # Batch operation
-When you specify `--template-folder` without providing any filename, staticfy searches through the specified folder and staticfies all the (html | htm) files it finds, this saves you more time if you want to staticfy a bunch of files at once. you could just create a new folder containing the files you want to staticfy and leave the rest to staticfy.
+Staticfy is also smart enough to know if it was given a single file or a directory to work with, if you want to staticfy all html files in a directory, just give staticfy the name of the directory that's all!.
+staticfy will search through the specified folder and staticfy all the (html | htm) files it finds, this saves you more time if you want to staticfy a bunch of files at once.
 
-`./staticfy.py --template-folder='templates'`
+```bash
+./staticfy.py html_files'
+```
+
+# Additional tags and attributes
+By default staticfy identifies and staticfies the following tags
+ 1. img tags with src attributes -- `<img src="" />`
+ 2. link tags with rel attributes -- `<link rel="" />`
+ 3. script tags with src attributes -- `<script src="" />`
+But it's common these days for javascript libraries (for a slider or animation) that have link to images (mostly) or other static resources. you can easily staticfy those tags by specifying the `add-tags` argument and passing in a valid JSON string, an example is this slider from http://www.pixedelic.com/plugins/camera/, you can staticfy the div tags like this
+
+```bash
+./staticfy.py staticfy.html --static-endpoint=static --add-tags='{"div": "data-src"}'`
+```
+
+and sure enough it gets staticfied
+
+### Before staticfying
+![alt tag](assets/before_add_tag.png)
+
+### After staticfying
+![alt tag](assets/after_add_tag.png)
+
 
 It should be noted that sub folders containing html files won't be staticfied, only html files that exist in the specified directory will be staticfied. (this might change in the future)
 
@@ -46,7 +74,7 @@ The tests are located in the `test.py` file and can be run with
 
 # Python support
 Staticfy supports both python2 and python3
-python 2.7 >
+(python 2.7 >)
 
 # Requirements and 3rd party stuff
 Beautiful soup 4
