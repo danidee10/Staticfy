@@ -1,5 +1,5 @@
 ### Status
-[![Build Status](https://travis-ci.org/danidee10/Staticfy.svg?branch=master)](https://travis-ci.org/danidee10/Staticfy)
+[![Build Status](https://travis-ci.org/danidee10/Staticfy.svg?branch=master)](https://travis-ci.org/danidee10/Staticfy) [![Code Climate](https://codeclimate.com/github/danidee10/Staticfy/badges/gpa.svg)](https://codeclimate.com/github/danidee10/Staticfy)
 
 # Staticfy
 Have you ever been annoyed by the amount of time you spend manually changing the links in a html template you bought or downloaded until all the static files and assets are properly linked and the file looks exactly like the demo you saw online?
