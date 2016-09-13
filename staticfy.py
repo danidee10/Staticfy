@@ -6,7 +6,9 @@ import os
 import errno
 import argparse
 
-# test to see if we're running python2 or python3, to set FileNotFoundError
+tags = {'img': 'src', 'link': 'href', 'script': 'src'}
+
+# check if we're running python2 or python3, to set FileNotFoundError
 try:
     FileNotFoundError
 except NameError:
@@ -74,27 +76,12 @@ def staticfy(filename, static_endpoint='static', template_folder=''):
 
     html_doc = BeautifulSoup(file_handle, 'html.parser')
 
-    # find all images in the file
-    image_links = html_doc.find_all('img', src=True)
+    for tag, value in tags.items():
+        all_tags = html_doc.find_all(lambda x: True if x.name == tag and not x.get(value).startswith(('http', '//')) else False)
 
-    # protect against external links like Google fonts, FontAwesome etc
-    links = html_doc.find_all(lambda x: True if x.name == 'link' and not x.get('href').startswith(('http', '//')) else False)
-
-    # find all script tags
-    scripts = html_doc.find_all('script', src=True)
-
-    # Do the actual replacement and store the results in a list
-    for link in links:
-        res = (link['href'], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, link['href']))
-        results.append(res)
-
-    for image in image_links:
-        res = (image['src'], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, image['src']))
-        results.append(res)
-
-    for script in scripts:
-        res = (script['src'], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, script['src']))
-        results.append(res)
+        for elem in all_tags:
+            res = (elem[value], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, elem[value]))
+            results.append(res)
 
     file_handle.close()
 
