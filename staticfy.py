@@ -6,13 +6,6 @@ import os
 import errno
 import argparse
 import json
-from json.decoder import JSONDecodeError
-
-# check if we're running python2 or python3, to set FileNotFoundError
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
 
 def makedir(path):
     # function to emulate exist_ok in Python >3.3 which works like mkdir -p in linux
@@ -90,10 +83,10 @@ def main():
     static_endpoint  = args.static_endpoint
     add_tags = args.add_tags
 
-    if args.add_tags:
+    if add_tags:
         try:
             add_tags = json.loads(args.add_tags)
-        except JSONDecodeError:
+        except ValueError:
             print('\033[91m' + 'Invalid json string: please provide a valid json string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
             sys.exit(1)
 
@@ -107,7 +100,7 @@ def main():
                     template_folder = directory = file + os.path.sep + filename
                     staticfy(template_folder, static_endpoint=static_endpoint, add_tags=add_tags)
 
-    except FileNotFoundError:
+    except IOError:
         print('\033[91m' + 'Unable to read/find the specified file or directory' + '\033[0m')
 
 if __name__ == '__main__':

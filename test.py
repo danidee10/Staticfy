@@ -5,12 +5,6 @@ import os
 import shutil
 from staticfy import staticfy
 
-# check if we're running python2 or python3, to set FileNotFoundError
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
-
 class StaticfyTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -69,7 +63,7 @@ class StaticfyTest(unittest.TestCase):
             self.assertEqual(file_contents, expected_result)
 
     def test_filenotfound_exception(self):
-        self.assertRaises(FileNotFoundError, staticfy, 'Invalid file')
+        self.assertRaises(IOError, staticfy, 'Invalid file')
 
     @classmethod
     def tearDownClass(cls):
