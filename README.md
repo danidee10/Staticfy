@@ -96,3 +96,7 @@ Pull requests and issues are welcome, if you're making a pull request, make sure
 you respect the surrounding code style and write tests to show that your code
 works, in your PR and commit also describe clearly what your PR attempts to
 fix/improve/add
+
+
+### Django support
+For django templates use the args `--project-type=django`

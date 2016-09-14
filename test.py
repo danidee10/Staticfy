@@ -48,6 +48,20 @@ class StaticfyTest(unittest.TestCase):
                                )
             self.assertEqual(file_contents, expected_result)
 
+    def test_django_project(self):
+        out_file = staticfy(self.filename, project_type='django')
+
+        with open(out_file, 'r') as f:
+            file_contents = f.read()
+
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="{% static 'images/staticfy.jpg' %}" />\n"""
+                               """<img data-url="images/staticfy.jpg" />\n"""
+                               """<link rel="stylesheet" href="{% static 'css/style.css' %}" />\n"""
+                               """<script src="{% static 'js/script.js' %}">alert("hello world")</script>\n"""
+                               )
+            self.assertEqual(file_contents, expected_result)
+
     def test_additional_tags(self):
         out_file = staticfy(self.filename, add_tags={'img': 'data-url'})
 
