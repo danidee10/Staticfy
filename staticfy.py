@@ -17,17 +17,6 @@ def makedir(path):
         else:
             raise
 
-def flask_specific():
-    """ store elem as a tuple with three elements to identify matching lines in the files during replacement
-    (
-        'src',
-        'images/staticfy.jpg',
-        "{{ url_for('static', filename='images/staticfy.jpg') }}"
-    )
-    """
-    res = (attr, elem[attr], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, elem[attr]))
-    results.append(res)
-
 def staticfy(file, *args, **kwargs):
 
     results = []  # list that holds the links, images and scripts as they're found by BeautifulSoup
