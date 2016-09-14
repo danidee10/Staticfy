@@ -3,7 +3,7 @@
 
 # Staticfy
 Have you ever been annoyed by the amount of time you spend manually changing the links in a html template you bought or downloaded until all the static files and assets are properly linked and the file looks exactly like the demo you saw online?
-with Staticfy you can save that time (and some of your hair) by automatically converting the static urls in your template to dynamic flask url's that wouldn't break if you decide to move your file to another location.
+with Staticfy you can save that time (and some of your hair) by automatically converting the static urls in your template to dynamic url's that wouldn't break if you decide to move your file to another location.
 
 `<img src="img/staticfy.jpg" />` ===> `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
@@ -75,6 +75,11 @@ It should be noted that sub folders containing html files won't be staticfied, o
 
 Whenever you run staticfy on a template or on a folder, a staticfy folder is generated in the present working directory and the staticfied file(s) is placed in that folder, you also need to copy the file(s) over to the appropriate directory to overwrite the existing file with the new one.
 
+# Using staticfy with other frameworks
+Staticfy was built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports django this can be done by specifying `--project-type=django`
+
+To add support for other frameworks, simply edit the __config__.py file and add your framework and it's corresponding pattern to the frameworks dictionary, using python3 string formatting for the pattern. you've added a new framework to staticfy read the contribution section and make a PR we'll love it!
+
 # Tests
 The tests are located in the `test.py` file and can be run with
 `./test.py`
@@ -95,8 +100,7 @@ if you have issues with importing HTML.parser on python 3.5, run this
 Pull requests and issues are welcome, if you're making a pull request, make sure
 you respect the surrounding code style and write tests to show that your code
 works, in your PR and commit also describe clearly what your PR attempts to
-fix/improve/add
+fix / improve / add
 
-
-### Django support
-For django templates use the args `--project-type=django`
+You should also write your code from python3's perspective, and try to avoid python2 style
+as much as possible.
