@@ -64,6 +64,12 @@ and sure enough it gets staticfied
 ### After staticfying
 ![alt tag](assets/after_add_tag.png)
 
+You can exclude certain tags you don't want to be staticfied by specifying the `--exc-tags` parameter, like `--add-tags` it expects a valid JSON string.
+
+```bash
+./staticfy.py staticfy.html --exc-tags='{"img": "src"}'`
+```
+running that on a template should leave the img tags with the src attribute as they were in the original file.
 
 It should be noted that sub folders containing html files won't be staticfied, only html files that exist in the specified directory will be staticfied. (this might change in the future)
 
