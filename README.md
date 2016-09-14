@@ -102,5 +102,5 @@ you respect the surrounding code style and write tests to show that your code
 works, in your PR and commit also describe clearly what your PR attempts to
 fix / improve / add
 
-You should also write your code from python3's perspective, and try to avoid python2 style
+You should also write your code from python3's perspective, try to avoid python2 style and idioms
 as much as possible.
