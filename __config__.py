@@ -1,9 +1,8 @@
+# config file to add support for new frameworks in flask
+#key => framework, value => pattern to use when staticfying
 
 frameworks = {
-    'flask': {
-        'format': "{{ url_for('%(endpoint)s', filename='%(attr_name)s') }}"
-    },
-    'django': {
-        'format': "{%% static '%(attr_name)s' %%}"
-    }
-}
+            'flask': "{{{{ url_for('{}', filename='{}') }}}}",
+            'django': "{{% {} '{}' %}}"
+            }
+
