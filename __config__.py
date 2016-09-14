@@ -1,5 +1,3 @@
-def func(endpoint=None, attr_name=None):
-    return endpoint, attr_name
 
 frameworks = {
     'flask': {
