@@ -45,14 +45,15 @@ staticfy will search through the specified folder and staticfy all the (html | h
 ```
 
 # Additional tags and attributes
-By default staticfy identifies and staticfies the following tags
+By default staticfy identifies and staticfies the following tags:
  1. img tags with src attributes -- `<img src="" />`
  2. link tags with rel attributes -- `<link rel="" />`
  3. script tags with src attributes -- `<script src="" />`
-But it's common these days for javascript libraries (for a slider or animation) that have link to images (mostly) or other static resources. you can easily staticfy those tags by specifying the `add-tags` argument and passing in a valid JSON string, an example is this slider from http://www.pixedelic.com/plugins/camera/, you can staticfy the div tags like this
+
+But it's common these days for javascript libraries (for a slider or animation) that have link to images (mostly) or other static resources. you can easily staticfy those tags by specifying the `--add-tags` argument and passing in a valid JSON string, an example is this slider from http://www.pixedelic.com/plugins/camera/, you can staticfy the div tags like this
 
 ```bash
-./staticfy.py staticfy.html --static-endpoint=static --add-tags='{"div": "data-src"}'`
+./staticfy.py staticfy.html --add-tags='{"div": "data-src"}'`
 ```
 
 and sure enough it gets staticfied
