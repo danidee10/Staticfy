@@ -76,7 +76,7 @@ It should be noted that sub folders containing html files won't be staticfied, o
 Whenever you run staticfy on a template or on a folder, a staticfy folder is generated in the present working directory and the staticfied file(s) is placed in that folder, you also need to copy the file(s) over to the appropriate directory to overwrite the existing file with the new one.
 
 # Using staticfy with other frameworks
-Staticfy was built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports django this can be done by specifying `--project-type=django`
+Staticfy was built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports django this can be done by specifying `--project-type=django`, if you specify a project_type that isn't found, staticfy would cry and gracefully fall back to it's flask roots.
 
 To add support for other frameworks, simply edit the __config__.py file and add your framework and it's corresponding pattern to the frameworks dictionary, using python3 string formatting for the pattern. you've added a new framework to staticfy read the contribution section and make a PR we'll love it!
 
