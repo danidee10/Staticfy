@@ -17,12 +17,11 @@ def makedir(path):
         else:
             raise
 
-def staticfy(file, *args, **kwargs):
+def staticfy(file, static_endpoint='static', add_tags={}, exc_tags={}):
 
     results = []  # list that holds the links, images and scripts as they're found by BeautifulSoup
     tags = {'img': 'src', 'link': 'href', 'script': 'src'}
-    add_tags = kwargs.get('add_tags') or {} # incase None is passed
-    static_url = kwargs.get('static_endpoint') or 'static' # incase None is passed as the static_endpoint
+    tags = {k:v for k,v in tags.items() if k not in exc_tags} # remove tags if any
     all_tags = [tags, add_tags]
 
     file_handle = open(file)
@@ -41,7 +40,7 @@ def staticfy(file, *args, **kwargs):
                    "{{ url_for('static', filename='images/staticfy.jpg') }}"
                 )
                 """
-                res = (attr, elem[attr], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, elem[attr]))
+                res = (attr, elem[attr], "{{{{ url_for('{}', filename='{}') }}}}".format(static_endpoint, elem[attr]))
                 results.append(res)
 
     file_handle.close()
@@ -73,6 +72,7 @@ def parse_cmd_arguments():
     parser.add_argument('file', type=str, help='Filename or directory to be staticfied')
     parser.add_argument('--static-endpoint', help='static endpoint which is "static" by default')
     parser.add_argument('--add-tags', type=str, help='additional tags to staticfy')
+    parser.add_argument('--exc-tags', type=str, help='tags to exclude')
     args = parser.parse_args()
 
     return args
@@ -81,24 +81,25 @@ def main():
     args = parse_cmd_arguments()
     file = args.file
     static_endpoint  = args.static_endpoint
-    add_tags = args.add_tags
+    add_tags = args.add_tags or '{}'
+    exc_tags = args.exc_tags or '{}'
 
-    if add_tags:
-        try:
-            add_tags = json.loads(args.add_tags)
-        except ValueError:
-            print('\033[91m' + 'Invalid json string: please provide a valid json string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
-            sys.exit(1)
+    try:
+        add_tags = json.loads(add_tags)
+        exc_tags = json.loads(exc_tags)
+    except ValueError:
+        print('\033[91m' + 'Invalid json string: please provide a valid json string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
+        sys.exit(1)
 
     try:
         if os.path.isfile(file) and file.endswith(('htm', 'html')):
-            staticfy(file, static_endpoint=static_endpoint, add_tags=add_tags)
+            staticfy(file, static_endpoint=static_endpoint, add_tags=add_tags, exc_tags=exc_tags)
         else:
             # it's a directory so loop through and staticfy
             for filename in os.listdir(file):
                 if filename.endswith(('htm', 'html')):
                     template_folder = directory = file + os.path.sep + filename
-                    staticfy(template_folder, static_endpoint=static_endpoint, add_tags=add_tags)
+                    staticfy(template_folder, static_endpoint=static_endpoint, add_tags=add_tags, exc_tags=exc_tags)
 
     except IOError:
         print('\033[91m' + 'Unable to read/find the specified file or directory' + '\033[0m')

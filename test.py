@@ -62,6 +62,20 @@ class StaticfyTest(unittest.TestCase):
                                )
             self.assertEqual(file_contents, expected_result)
 
+    def test_exclusive_tags(self):
+        out_file = staticfy(self.filename, exc_tags={'link': 'rel', 'img': 'src'})
+
+        with open(out_file, 'r') as f:
+            file_contents = f.read()
+
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="images/staticfy.jpg" />\n"""
+                               """<img data-url="images/staticfy.jpg" />\n"""
+                               """<link rel="stylesheet" href="css/style.css" />\n"""
+                               """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
+                               )
+            self.assertEqual(file_contents, expected_result)
+
     def test_filenotfound_exception(self):
         self.assertRaises(IOError, staticfy, 'Invalid file')
 
