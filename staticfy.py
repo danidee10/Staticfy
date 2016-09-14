@@ -17,18 +17,30 @@ def makedir(path):
         else:
             raise
 
+def flask_specific():
+    """ store elem as a tuple with three elements to identify matching lines in the files during replacement
+    (
+        'src',
+        'images/staticfy.jpg',
+        "{{ url_for('static', filename='images/staticfy.jpg') }}"
+    )
+    """
+    res = (attr, elem[attr], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, elem[attr]))
+    results.append(res)
+
 def staticfy(file, *args, **kwargs):
 
     results = []  # list that holds the links, images and scripts as they're found by BeautifulSoup
     tags = {'img': 'src', 'link': 'href', 'script': 'src'}
     add_tags = kwargs.get('add_tags') or {} # incase None is passed
     static_url = kwargs.get('static_endpoint') or 'static' # incase None is passed as the static_endpoint
+    project_type = kwargs.get('project_type', 'flask')
     all_tags = [tags, add_tags]
 
     file_handle = open(file)
 
     html_doc = BeautifulSoup(file_handle, 'html.parser')
-
+    
     for tags in all_tags:
         for tag, attr in tags.items():
             all_tags = html_doc.find_all(lambda x: True if x.name == tag and not x.get(attr, 'http').startswith(('http', '//')) else False)
@@ -41,7 +53,10 @@ def staticfy(file, *args, **kwargs):
                    "{{ url_for('static', filename='images/staticfy.jpg') }}"
                 )
                 """
-                res = (attr, elem[attr], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, elem[attr]))
+                if project_type == "flask":
+                    res = (attr, elem[attr], "{{{{ url_for('{}', filename='{}') }}}}".format(static_url, elem[attr]))
+                else:
+                    res = (attr, elem[attr], "{%% static '%s' %%}" % elem[attr])
                 results.append(res)
 
     file_handle.close()
@@ -73,6 +88,7 @@ def parse_cmd_arguments():
     parser.add_argument('file', type=str, help='Filename or directory to be staticfied')
     parser.add_argument('--static-endpoint', help='static endpoint which is "static" by default')
     parser.add_argument('--add-tags', type=str, help='additional tags to staticfy')
+    parser.add_argument('--project-type', type=str, help='Project Type (default: flask)')
     args = parser.parse_args()
 
     return args
@@ -82,6 +98,7 @@ def main():
     file = args.file
     static_endpoint  = args.static_endpoint
     add_tags = args.add_tags
+    project_type = args.project_type
 
     if add_tags:
         try:
@@ -92,7 +109,7 @@ def main():
 
     try:
         if os.path.isfile(file) and file.endswith(('htm', 'html')):
-            staticfy(file, static_endpoint=static_endpoint, add_tags=add_tags)
+            staticfy(file, static_endpoint=static_endpoint, add_tags=add_tags, project_type=project_type)
         else:
             # it's a directory so loop through and staticfy
             for filename in os.listdir(file):
