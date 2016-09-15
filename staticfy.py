@@ -51,15 +51,13 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
                    "{{ url_for('static', filename='images/staticfy.jpg') }}"
                 )
                 """
-                res = (attr, elem[attr], frameworks[project_type].format(
-                    static_endpoint, elem[attr]))
+                res = (attr, elem[attr], frameworks[project_type] % {'endpoint':static_endpoint, "attr_name": elem[attr]})
                 results.append(res)
 
     file_handle.close()
 
     # incase filename is a link to a path
     filename = file_.split(os.path.sep)[-1]
-
     # create the staticfy and the appropriate template folder
     out_file = os.path.join('staticfy', filename)
     makedir(os.path.dirname(out_file))
