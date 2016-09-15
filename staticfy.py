@@ -26,6 +26,7 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
     add_tags = kwargs.get('add_tags', {}) # dangerous to set keyword args as a dict.
     exc_tags = kwargs.get('exc_tags', {})
     tags = {'img': 'src', 'link': 'href', 'script': 'src'}
+
     # remove tags if any
     tags = {k: v for k, v in tags.items() if k not in exc_tags}
     all_tags = [tags, add_tags]
@@ -50,8 +51,8 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
                    "{{ url_for('static', filename='images/staticfy.jpg') }}"
                 )
                 """
-                res = (attr, elem[attr], frameworks[project_type] % dict(
-                    endpoint=static_endpoint, attr_name=elem[attr]))
+                res = (attr, elem[attr], frameworks[project_type].format(
+                    static_endpoint, elem[attr]))
                 results.append(res)
 
     file_handle.close()
@@ -69,8 +70,10 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
                 if attr in file_line and value in file_line:
                     # replace all single quotes with double quotes
                     file_line = re.sub(r'\'', '"', file_line)
+
                     # replace old link with new staticfied link
                     file_line = file_line.replace(value, new_link)
+
                     # print(file_line) verbose
                     output_file.write(file_line)
                     break
@@ -85,8 +88,8 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
 
 def parse_cmd_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'file', type=str, help='Filename or directory to be staticfied')
+    parser.add_argument('file', type=str, 
+                        help='Filename or directory to be staticfied')
     parser.add_argument('--static-endpoint',
                         help='static endpoint which is "static" by default')
     parser.add_argument('--add-tags', type=str,
@@ -103,7 +106,7 @@ def main():
     args = parse_cmd_arguments()
     file_ = args.file
     static_endpoint = args.static_endpoint
-    project_type = args.project_type or os.getenv('FRAMEWORK_TYPE', 'flask')
+    project_type = args.project_type or os.getenv('STATICFY_FRAMEWORK', 'flask')
     add_tags = args.add_tags or '{}'
     exc_tags = args.exc_tags or '{}'
 
