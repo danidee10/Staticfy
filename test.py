@@ -48,20 +48,6 @@ class StaticfyTest(unittest.TestCase):
                                )
             self.assertEqual(file_contents, expected_result)
 
-    def test_django_project(self):
-        out_file = staticfy(self.filename, project_type='django')
-
-        with open(out_file, 'r') as f:
-            file_contents = f.read()
-
-            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
-                               """<img src="{% static 'images/staticfy.jpg' %}" />\n"""
-                               """<img data-url="images/staticfy.jpg" />\n"""
-                               """<link rel="stylesheet" href="{% static 'css/style.css' %}" />\n"""
-                               """<script src="{% static 'js/script.js' %}">alert("hello world")</script>\n"""
-                               )
-            self.assertEqual(file_contents, expected_result)
-
     def test_additional_tags(self):
         out_file = staticfy(self.filename, add_tags={'img': 'data-url'})
 
@@ -87,6 +73,35 @@ class StaticfyTest(unittest.TestCase):
                                """<img data-url="images/staticfy.jpg" />\n"""
                                """<link rel="stylesheet" href="css/style.css" />\n"""
                                """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
+                               )
+            self.assertEqual(file_contents, expected_result)
+
+    def test_django_project(self):
+        out_file = staticfy(self.filename, project_type='django')
+
+        with open(out_file, 'r') as f:
+            file_contents = f.read()
+
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="{% static 'images/staticfy.jpg' %}" />\n"""
+                               """<img data-url="images/staticfy.jpg" />\n"""
+                               """<link rel="stylesheet" href="{% static 'css/style.css' %}" />\n"""
+                               """<script src="{% static 'js/script.js' %}">alert("hello world")</script>\n"""
+                               )
+            self.assertEqual(file_contents, expected_result)
+
+    def test_laravel_project(self):
+        # laravel url's look like this {{ URL::asset('css/bootstrap.min.css') }}
+
+        out_file = staticfy(self.filename, project_type='laravel')
+
+        with open(out_file, 'r') as f:
+            file_contents = f.read()
+            expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                               """<img src="{{ URL::asset('images/staticfy.jpg') }}" />\n"""
+                               """<img data-url="images/staticfy.jpg" />\n"""
+                               """<link rel="stylesheet" href="{{ URL::asset('css/style.css') }}" />\n"""
+                               """<script src="{{ URL::asset('js/script.js') }}">alert("hello world")</script>\n"""
                                )
             self.assertEqual(file_contents, expected_result)
 

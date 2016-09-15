@@ -2,6 +2,7 @@
 #key => framework, value => pattern to use when staticfying
 
 frameworks = {
-    'flask':  "{{ url_for('%(endpoint)s', filename='%(attr_name)s') }}",
-    'django':"{%% static '%(attr_name)s' %%}"
+    'flask':  "{{ url_for('%(static_endpoint)s', filename='%(asset_location)s') }}",
+    'django':"{%% static '%(asset_location)s' %%}",
+    'laravel': "{{ URL::asset('%(asset_location)s') }}"
 }

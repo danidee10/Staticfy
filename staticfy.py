@@ -44,14 +44,16 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
             all_tags = html_doc.find_all(condition(tag))
 
             for elem in all_tags:
-                """ store elem as a tuple with three elements to identify matching lines in the files during replacement
+                """ store elem as a tuple with three elements to identify
+                 matching lines in the files during replacement
                 (
                    'src',
                    'images/staticfy.jpg',
                    "{{ url_for('static', filename='images/staticfy.jpg') }}"
                 )
                 """
-                res = (attr, elem[attr], frameworks[project_type] % {'endpoint':static_endpoint, "attr_name": elem[attr]})
+                res = (attr, elem[attr], frameworks[project_type] %
+                {'static_endpoint':static_endpoint, "asset_location": elem[attr]})
                 results.append(res)
 
     file_handle.close()
@@ -87,7 +89,7 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
 
 def parse_cmd_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('file', type=str, 
+    parser.add_argument('file', type=str,
                         help='Filename or directory to be staticfied')
     parser.add_argument('--static-endpoint',
                         help='static endpoint which is "static" by default')
