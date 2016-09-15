@@ -89,7 +89,7 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
 
 def parse_cmd_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('file', type=str,
+    parser.add_argument('file', type=str, nargs='+',
                         help='Filename or directory to be staticfied')
     parser.add_argument('--static-endpoint',
                         help='static endpoint which is "static" by default')
@@ -105,7 +105,7 @@ def parse_cmd_arguments():
 
 def main():
     args = parse_cmd_arguments()
-    file_ = args.file
+    files = args.file
     static_endpoint = args.static_endpoint
     project_type = args.project_type or os.getenv('STATICFY_FRAMEWORK', 'flask')
     add_tags = args.add_tags or '{}'
@@ -119,21 +119,22 @@ def main():
             '\'{"img": "data-url"}\'') + '\033[0m')
         sys.exit(1)
 
-    try:
-        if os.path.isfile(file_) and file_.endswith(('htm', 'html')):
-            staticfy(file_, static_endpoint=static_endpoint, add_tags=add_tags,
-                     exc_tags=exc_tags, project_type=project_type)
-        else:
-            # it's a directory so loop through and staticfy
-            for filename in os.listdir(file_):
-                if filename.endswith(('htm', 'html')):
-                    template_folder = file_ + os.path.sep + filename
-                    staticfy(template_folder, static_endpoint=static_endpoint,
-                             add_tags=add_tags, exc_tags=exc_tags, project_type=project_type)
+    for file_ in files:
+        try:
+            if os.path.isfile(file_) and file_.endswith(('htm', 'html')):
+                staticfy(file_, static_endpoint=static_endpoint, add_tags=add_tags,
+                         exc_tags=exc_tags, project_type=project_type)
+            else:
+                # it's a directory so loop through and staticfy
+                for filename in os.listdir(file_):
+                    if filename.endswith(('htm', 'html')):
+                        temp_filename = file_ + os.path.sep + filename
+                        staticfy(temp_filename, static_endpoint=static_endpoint,
+                                 add_tags=add_tags, exc_tags=exc_tags, project_type=project_type)
 
-    except IOError:
-        print(
-            '\033[91m' + 'Unable to read/find the specified file or directory' + '\033[0m')
+        except IOError:
+            print(
+                '\033[91m' + 'Unable to read/find the specified file or directory' + '\033[0m')
 
 if __name__ == '__main__':
     main()
