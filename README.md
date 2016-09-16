@@ -7,8 +7,14 @@ with Staticfy you can save that time (and some of your hair) by automatically co
 
 `<img src="img/staticfy.jpg" />` ===> `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
-# Usage
-make the script executable with
+# Installation and Usage
+Clone the repo from github
+
+```bash
+git clone https://github.com/danidee10/Staticfy.git
+```
+
+Make the script executable with
 ```bash
 sudo chmod +x staticfy.py`
 ```
@@ -18,7 +24,7 @@ and run it
 ./staticfy.py staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'`
 ```
 
-using `./` runs Staticfy with python3, if you're running windows or you want to use another version of python e.g python2, you can just run
+Using `./` runs Staticfy with python3, if you're running windows or you want to use another version of python e.g python2, you can just run
 
 ```bash
 python2 staticfy.py staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'`
@@ -76,7 +82,19 @@ It should be noted that sub folders containing html files won't be staticfied, o
 Whenever you run staticfy on a template or on a folder, a staticfy folder is generated in the present working directory and the staticfied file(s) is placed in that folder, you also need to copy the file(s) over to the appropriate directory to overwrite the existing file with the new one.
 
 # Using staticfy with other frameworks
-Staticfy was built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports django this can be done by specifying `--project-type=django`, if you specify a project_type that isn't found, staticfy would cry and gracefully fall back to it's flask roots.
+Staticfy was initially built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports:
+ 1. flask 
+ 2. django and 
+ 3. laravel
+ 
+for example to use staticfy with django specify `--project-type=django`,
+You can also set the environment variable `STATICFY_FRAMEWORK` to any supported framework, so you can avoid using `--project-type` everytime. if you're running linux you can easily do this from the terminal.
+
+```bash
+export STATICFY_FRAMEWORK=django
+```
+
+If you specify a project_type that isn't found, staticfy would cry and gracefully fall back to it's flask roots.
 
 To add support for other frameworks, simply edit the __config__.py file and add your framework and it's corresponding pattern to the frameworks dictionary, using python3 string formatting for the pattern. you've added a new framework to staticfy read the contribution section and make a PR we'll love it!
 
