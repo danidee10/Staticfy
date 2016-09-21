@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='Staticfy',
-      version='1.0',
+      version='0.1',
       description='Convert static assets links to dynamic web framework links',
+      url='https://github.com/danidee10/funniest',
       author='Osaetin Daniel',
       author_email='osaetindaniel@gmail.com',
-      url='https://danidee10.github.io',
-      packages=['bs4'],
-     )
+      license='GPL',
+      packages=['Staticfy'],
+      install_requires=[
+          'beautifulsoup4',
+      ],
+      zip_safe=False)
