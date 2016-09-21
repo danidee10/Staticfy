@@ -9,7 +9,7 @@ setup(name='Staticfy',
       author='Osaetin Daniel',
       author_email='osaetindaniel@gmail.com',
       license='GPL',
-      packages=['staticfy'],
+      py_modules=['staticfy'],
       install_requires=[
           'beautifulsoup4',
       ],
