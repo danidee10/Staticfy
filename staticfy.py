@@ -53,12 +53,14 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
                 )
 
                 ============================================================
+                remove leading slash e.g '/static/images.jpg' if any and then
                 if the url is also prefixed with static,
-                e.g /static/images/image.jpg remove the prefix 'static'
+                e.g static/image.jpg remove the prefix 'static'
                 ============================================================
                 """
-                attr_prefix = elem[attr].split('/')
-                asset_location = '/'.join(attr_prefix[1:]) if attr_prefix[0] == 'static' else elem[attr]
+                rem_prefix = elem[attr][1:] if elem[attr].startswith('/') else elem[attr]
+                attr_prefix = rem_prefix.split('/')
+                asset_location = '/'.join(attr_prefix[1:]) if attr_prefix[0] == 'static' else '/'.join(attr_prefix)
 
                 res = (attr, elem[attr], frameworks[project_type] %
                 {'static_endpoint':static_endpoint, "asset_location":asset_location})

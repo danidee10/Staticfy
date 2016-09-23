@@ -10,10 +10,10 @@ class StaticfyTest(unittest.TestCase):
     def setUpClass(cls):
         cls.filename = 'test.html'
         data = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
-                """<img src="images/staticfy.jpg" />\n"""
+                """<img src="/static/images/staticfy.jpg" />\n"""
                 """<img data-url="images/staticfy.jpg" />\n"""
                 """<link rel="stylesheet" href="css/style.css" />\n"""
-                """<script src="js/script.js">alert('hello world')</script>\n"""
+                """<script src="/js/script.js">alert('hello world')</script>\n"""
                 )
 
         with open(cls.filename, 'w+') as f:
@@ -69,7 +69,7 @@ class StaticfyTest(unittest.TestCase):
             file_contents = f.read()
 
             expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
-                               """<img src="images/staticfy.jpg" />\n"""
+                               """<img src="/static/images/staticfy.jpg" />\n"""
                                """<img data-url="images/staticfy.jpg" />\n"""
                                """<link rel="stylesheet" href="css/style.css" />\n"""
                                """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
