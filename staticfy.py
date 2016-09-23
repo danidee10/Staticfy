@@ -51,9 +51,17 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
                    'images/staticfy.jpg',
                    "{{ url_for('static', filename='images/staticfy.jpg') }}"
                 )
+
+                ============================================================
+                if the url is also prefixed with static,
+                e.g /static/images/image.jpg remove the prefix 'static'
+                ============================================================
                 """
+                attr_prefix = elem[attr].split('/')
+                asset_location = '/'.join(attr_prefix[1:]) if attr_prefix[0] == 'static' else elem[attr]
+
                 res = (attr, elem[attr], frameworks[project_type] %
-                {'static_endpoint':static_endpoint, "asset_location": elem[attr]})
+                {'static_endpoint':static_endpoint, "asset_location":asset_location})
                 results.append(res)
 
     file_handle.close()
