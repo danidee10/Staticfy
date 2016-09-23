@@ -58,8 +58,9 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
 
     file_handle.close()
 
-    # incase filename is a link to a path
+    # extract the filename incase the filename is a path html_files/[home.html]
     filename = file_.split(os.path.sep)[-1]
+
     # create the staticfy and the appropriate template folder
     out_file = os.path.join('staticfy', filename)
     makedir(os.path.dirname(out_file))
@@ -106,7 +107,7 @@ def parse_cmd_arguments():
 def main():
     args = parse_cmd_arguments()
     files = args.file
-    static_endpoint = args.static_endpoint
+    static_endpoint = args.static_endpoint or 'static' # if it's None
     project_type = args.project_type or os.getenv('STATICFY_FRAMEWORK', 'flask')
     add_tags = args.add_tags or '{}'
     exc_tags = args.exc_tags or '{}'
