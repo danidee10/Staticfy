@@ -53,8 +53,8 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
                 )
 
                 ============================================================
-                remove leading slash e.g '/static/images.jpg' if any and then
-                if the url is also prefixed with static,
+                remove leading slash e.g '/static/images.jpg' if any
+                also, if the url is also prefixed with static,
                 e.g static/image.jpg remove the prefix 'static'
                 ============================================================
                 """
@@ -78,15 +78,16 @@ def staticfy(file_, static_endpoint='static', project_type='flask', **kwargs):
     # open files and start replacing matching lines
     with open(file_, 'r') as input_file, open(out_file, 'w+') as output_file:
         for file_line in input_file:
+            # replace all single quotes with double quotes
+            file_line = re.sub(r'\'', '"', file_line)
+
             for attr, value, new_link in results:
                 if attr in file_line and value in file_line:
-                    # replace all single quotes with double quotes
-                    file_line = re.sub(r'\'', '"', file_line)
 
                     # replace old link with new staticfied link
                     file_line = file_line.replace(value, new_link)
 
-                    # print(file_line) verbose
+                    # print(file_line) --verbose
                     output_file.write(file_line)
                     break
             else:
