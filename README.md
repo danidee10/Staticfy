@@ -81,6 +81,31 @@ It should be noted that sub folders containing html files won't be staticfied, o
 
 Whenever you run staticfy on a template or on a folder, a staticfy folder is generated in the present working directory and the staticfied file(s) is placed in that folder, you also need to copy the file(s) over to the appropriate directory to overwrite the existing file with the new one.
 
+# Inconsistency with single and double quotes in html
+Staticfy also converts all single quoted html attributes to double quoted attributes. It's very common to see html files that look like this
+
+``` html
+
+<html>
+
+  <head>
+    <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />
+    <img src="/static/images/staticfy.jpg" />
+    <img data-url='images/staticfy.jpg' />
+    <link rel="stylesheet" href='css/style.css' />
+    <script src="/js/script.js"></script>
+  </head>
+
+</html>
+```
+You can easily fix all the inconsistencies by running staticfy on that file. There also *little* performance benefits to be gained when you gzip an html file that has consistent use of quotes (either double or single) against an inconsistent one. Don't believe it...Look at this
+
+![alt tag](assets/staticfy.gif)
+
+You can see a reduction from `219 bytes` to `204 bytes`, of course this difference is very little, but depending on how inconsistent and large your file is, you could save a save a few kilobytes which means faster page load times for your end users.
+
+HTML is a very forgiving, and you're allowed to use single quotes or double quotes. but the double quotes are the **Unofficial Standard**
+
 # Using staticfy with other frameworks
 Staticfy was initially built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports:
  1. flask 
