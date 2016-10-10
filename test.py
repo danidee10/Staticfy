@@ -3,7 +3,7 @@
 import unittest
 import os
 import shutil
-from staticfy import staticfy
+from staticfy.staticfy import staticfy
 
 class StaticfyTest(unittest.TestCase):
     @classmethod
