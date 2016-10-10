@@ -6,7 +6,7 @@ import os
 import errno
 import argparse
 import json
-from __config__ import frameworks
+from .__config__ import frameworks
 
 
 def makedir(path):
@@ -147,6 +147,3 @@ def main():
         except IOError:
             print(
                 '\033[91m' + 'Unable to read/find the specified file or directory' + '\033[0m')
-
-if __name__ == '__main__':
-    main()
