@@ -13,7 +13,7 @@ To this:
 
 `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
-and then your web framework handles the remaining conversion to the appropriate html
+and then your web framework handles the remaining conversion to the appropriate url
 
 # Get it in 10 seconds!
 It's available as a package on PyPi so you can install it with
@@ -106,18 +106,18 @@ HTML is a very forgiving, and you're allowed to use single quotes or double quot
 
 # Using staticfy with other frameworks
 Staticfy was initially built with flask in mind, but it can also be extended to support other frameworks easily, out of the box it supports:
- 1. flask 
- 2. django and 
+ 1. flask
+ 2. django and
  3. laravel
- 
-For example to use staticfy with django specify `--project-type=django`,
-You can also set the environment variable `STATICFY_FRAMEWORK` to any supported framework, so you can avoid using `--project-type` everytime. if you're running linux you can easily do this from the terminal.
+
+For example to use staticfy with django specify `--framework=django`,
+You can also set the environment variable `STATICFY_FRAMEWORK` to any supported framework, so you can avoid using `--framework` everytime. if you're running linux you can easily do this.
 
 ```bash
 export STATICFY_FRAMEWORK=django
 ```
 
-If you specify a project_type that isn't found, staticfy would cry and gracefully fall back to it's flask roots.
+If you specify a framework that isn't found, staticfy would cry and gracefully fall back to it's flask roots.
 
 # Tests
 The tests are located in the `test.py` file and can be run with
