@@ -25,11 +25,7 @@ That's all!
 
 Run it straight from the command line with:
 ```bash
-<<<<<<< HEAD
 staticfy staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'
-=======
-staticfy staticfy.html --static-endpoint static --add-tags '{"img": "data-url"}'`
->>>>>>> 8fede32... Update README.md
 ```
 
  `--static-endpoint` and `--add-tags` are optional
@@ -61,11 +57,7 @@ By default staticfy identifies and staticfies the following tags:
 But it's common these days for javascript libraries (for a slider or animation) that have link to images (mostly) or other static resources. you can easily staticfy those tags by specifying the `--add-tags` argument and passing in a valid JSON string, an example is this slider from http://www.pixedelic.com/plugins/camera/, you can staticfy the div tags like this:
 
 ```bash
-<<<<<<< HEAD
 staticfy staticfy.html --add-tags='{"div": "data-src"}'
-=======
-staticfy staticfy.html --add-tags '{"div": "data-src"}'`
->>>>>>> 8fede32... Update README.md
 ```
 
 Sure enough it gets staticfied.
@@ -79,11 +71,7 @@ Sure enough it gets staticfied.
 You can exclude certain tags you don't want to be staticfied by specifying the `--exc-tags` parameter, like `--add-tags` it expects a valid JSON string.
 
 ```bash
-<<<<<<< HEAD
 staticfy staticfy.html --exc-tags='{"img": "src"}'
-=======
-staticfy staticfy.html --exc-tags '{"img": "src"}'`
->>>>>>> 8fede32... Update README.md
 ```
 Running that on a template should leave the img tags with the src attribute as they were in the original file.
 
