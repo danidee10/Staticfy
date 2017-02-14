@@ -6,7 +6,7 @@ import os
 import errno
 import argparse
 import json
-from .__config__ import frameworks
+from __config__ import frameworks
 
 
 def makedir(path):
@@ -34,7 +34,7 @@ def get_asset_location(element, attr):
     return asset_location.group(2)
 
 
-def transform(matches, framework, static_endpoint):
+def transform(matches, framework, namespace, static_endpoint):
     """
     The actual transformation occurs here.
 
@@ -42,14 +42,15 @@ def transform(matches, framework, static_endpoint):
         "{{ url_for('static', filename='images/staticfy.jpg') }}"
     """
     transformed = []
+    namespace = namespace + '/' if namespace else ''
 
     for attribute, elements in matches:
         for element in elements:
             asset_location = get_asset_location(element, attribute)
 
             res = (attribute, element[attribute], frameworks[framework] %
-                   {'static_endpoint': static_endpoint,
-                    "asset_location": asset_location})
+                   {'static_endpoint': static_endpoint, 'namespace': namespace,
+                    'asset_location': asset_location})
             transformed.append(res)
 
     return transformed
@@ -77,7 +78,7 @@ def get_elements(html_file, tags):
 
 
 def staticfy(html_file, add_tags={}, exc_tags={}, framework='flask',
-             static_endpoint='static'):
+             namespace='', static_endpoint='static'):
     """
     Staticfy method.
 
@@ -99,7 +100,7 @@ def staticfy(html_file, add_tags={}, exc_tags={}, framework='flask',
     matches = get_elements(html_file, tags)
 
     # transform old links to new links
-    transformed = transform(matches, framework, static_endpoint)
+    transformed = transform(matches, framework, namespace, static_endpoint)
 
     # Replace lines
     result = []
@@ -129,7 +130,7 @@ def file_ops(staticfied, filename):
     out_file = os.path.join('staticfy', filename)
     makedir(os.path.dirname(out_file))
 
-    with open(out_file) as f:
+    with open(out_file, 'w') as f:
         f.write(staticfied)
 
     print('staticfied \033[94m{} ==> \033[92m{}\033[0m\n'.
@@ -145,9 +146,11 @@ def parse_cmd_arguments():
                         help='static endpoint which is "static" by default')
     parser.add_argument('--add-tags', type=str,
                         help='additional tags to staticfy')
+    parser.add_argument('--exc-tags', type=str, help='tags to exclude')
     parser.add_argument('--framework', type=str,
                         help='Web Framework (default: flask)')
-    parser.add_argument('--exc-tags', type=str, help='tags to exclude')
+    parser.add_argument('--namespace', type=str,
+                        help='string to prefix url with')
     args = parser.parse_args()
 
     return args
@@ -158,24 +161,26 @@ def main():
     args = parse_cmd_arguments()
     files = args.file
     static_endpoint = args.static_endpoint  # if None is supplied
-    framework = args.framework or os.getenv('STATICFY_FRAMEWORK', 'flask')
     add_tags = args.add_tags or '{}'
     exc_tags = args.exc_tags or '{}'
+    framework = args.framework or os.getenv('STATICFY_FRAMEWORK', 'flask')
+    namespace = args.namespace or ''
 
     try:
         add_tags = json.loads(add_tags)
         exc_tags = json.loads(exc_tags)
     except ValueError:
-        print('\033[91m' + 'Invalid json string: please provide a valid json \
-            string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
+        print('\033[91m' + 'Invalid json string: please provide a valid json '
+              'string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
         sys.exit(1)
 
     for f in files:
         try:
+            # import pdb; pdb.set_trace()
             if os.path.isfile(f) and f.endswith(('htm', 'html')):
                 staticfied = staticfy(f, static_endpoint=static_endpoint,
                                       add_tags=add_tags, exc_tags=exc_tags,
-                                      framework=framework)
+                                      framework=framework, namespace=namespace)
                 file_ops(staticfied, f)
             else:
                 # it's a directory so loop through and staticfy
@@ -185,9 +190,14 @@ def main():
                         staticfied = staticfy(temp_filename, add_tags=add_tags,
                                               static_endpoint=static_endpoint,
                                               exc_tags=exc_tags,
-                                              framework=framework)
+                                              framework=framework,
+                                              namespace=namespace)
                         file_ops(staticfied, temp_filename)
 
         except IOError:
-            print('\033[91m' + 'Unable to read/find the specified file or \
-                                directory' + '\033[0m')
+            print('\033[91m' + 'Unable to read/find the specified file or '
+                               'directory' + '\033[0m')
+
+
+if __name__ == '__main__':
+    main()

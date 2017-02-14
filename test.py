@@ -109,6 +109,18 @@ class StaticfyTest(unittest.TestCase):
                            )
         self.assertEqual(result, expected_result)
 
+    def test_namespace(self):
+        """Testing namespace."""
+        result = staticfy(self.filename, framework='django', namespace='admin')
+
+        expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                           """<img src="{% static 'admin/images/staticfy.jpg' %}" />\n"""
+                           """<img data-url="images/staticfy.jpg" />\n"""
+                           """<link rel="stylesheet" href="{% static 'admin/css/style.css' %}" />\n"""
+                           """<script src="{% static 'admin/js/script.js' %}">alert("hello world")</script>\n"""
+                           )
+        self.assertEqual(result, expected_result)
+
     def test_filenotfound_exception(self):
         self.assertRaises(IOError, staticfy, 'Invalid file')
 
