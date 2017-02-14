@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/danidee10/Staticfy.svg?branch=master)](https://travis-ci.org/danidee10/Staticfy) [![Code Climate](https://codeclimate.com/github/danidee10/Staticfy/badges/gpa.svg)](https://codeclimate.com/github/danidee10/Staticfy)
 
 # Staticfy
-Have you ever been annoyed by the amount of time you spend manually changing the links in a html template you bought or downloaded until all the static files and assets are properly linked and the file looks exactly like the demo you saw online?
+You just got a brand new template fron the front-end designer,  Everything's going well, Until you realize the amount of time you'll spend manually changing the links in the html templates you until all the static files and assets are properly linked and the file looks exactly like the demo he/she showed you.
 with Staticfy you can save that time (and some of your hair) by automatically converting the static urls in your template to dynamic url's that wouldn't break if you decide to move your file to another location.
 
 It transforms html links (in this example Flask) from this:
@@ -13,7 +13,7 @@ To this:
 
 `<img src="{{ url_for('static', filename='img/staticfy.jpg') }}" />`
 
-and then your web framework handles the remaining conversion to the appropriate url
+and then your web framework's templating language can resolve the tags to the right url.
 
 # Get it in 10 seconds!
 It's available as a package on PyPi so you can install it with
@@ -25,7 +25,11 @@ That's all!
 
 Run it straight from the command line with:
 ```bash
-staticfy staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'`
+<<<<<<< HEAD
+staticfy staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'
+=======
+staticfy staticfy.html --static-endpoint static --add-tags '{"img": "data-url"}'`
+>>>>>>> 8fede32... Update README.md
 ```
 
  `--static-endpoint` and `--add-tags` are optional
@@ -45,7 +49,7 @@ Staticfy is also smart enough to know if it was given a single file or a directo
 staticfy will search through the specified folder and staticfy all the (html | htm) files it finds, this saves you more time if you want to staticfy a bunch of files at once.
 
 ```bash
-staticfy html_files'
+staticfy html_files
 ```
 
 # Additional tags and attributes
@@ -57,7 +61,11 @@ By default staticfy identifies and staticfies the following tags:
 But it's common these days for javascript libraries (for a slider or animation) that have link to images (mostly) or other static resources. you can easily staticfy those tags by specifying the `--add-tags` argument and passing in a valid JSON string, an example is this slider from http://www.pixedelic.com/plugins/camera/, you can staticfy the div tags like this:
 
 ```bash
-staticfy staticfy.html --add-tags='{"div": "data-src"}'`
+<<<<<<< HEAD
+staticfy staticfy.html --add-tags='{"div": "data-src"}'
+=======
+staticfy staticfy.html --add-tags '{"div": "data-src"}'`
+>>>>>>> 8fede32... Update README.md
 ```
 
 Sure enough it gets staticfied.
@@ -71,13 +79,27 @@ Sure enough it gets staticfied.
 You can exclude certain tags you don't want to be staticfied by specifying the `--exc-tags` parameter, like `--add-tags` it expects a valid JSON string.
 
 ```bash
-staticfy staticfy.html --exc-tags='{"img": "src"}'`
+<<<<<<< HEAD
+staticfy staticfy.html --exc-tags='{"img": "src"}'
+=======
+staticfy staticfy.html --exc-tags '{"img": "src"}'`
+>>>>>>> 8fede32... Update README.md
 ```
 Running that on a template should leave the img tags with the src attribute as they were in the original file.
 
 It should be noted that sub folders containing html files won't be staticfied, only html files that exist in the specified directory will be staticfied. (this might change in the future)
 
 Whenever you run staticfy on a template or on a folder, a staticfy folder is generated in the present working directory and the staticfied file(s) is placed in that folder, you also need to copy the file(s) over to the appropriate directory to overwrite the existing file with the new one.
+
+# Namespacing
+When your project gets big, It's necessary to namespace static assets to avoid name collision, you can achieve this by passing a string to the `--namespace` argument. The string would automatically be prepended to the url. For example in django
+
+```bash
+staticfy staticfy.html --namespace 'admin'
+```
+
+Would convert `<img src="img/staticfy.jpg" />` to this `<img src="{% url static admin/img/staticfy.jpg %}" />`
+
 
 # Inconsistency with single and double quotes in html
 Staticfy also converts all single quoted html attributes to double quoted attributes. It's very common to see html files that look like this.

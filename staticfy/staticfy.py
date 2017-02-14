@@ -6,7 +6,7 @@ import os
 import errno
 import argparse
 import json
-from __config__ import frameworks
+from .__config__ import frameworks
 
 
 def makedir(path):
