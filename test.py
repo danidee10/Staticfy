@@ -16,7 +16,7 @@ class StaticfyTest(unittest.TestCase):
         data = ("""<link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                 """<img src="/static/images/staticfy.jpg" />\n"""
                 """<img data-url="images/staticfy.jpg" />\n"""
-                """<link rel="stylesheet" href='css/style.css' />\n"""
+                """<link rel="stylesheet" href='../css/style.css' />\n"""
                 """<script src="/js/script.js">alert('hello world')</script>\n"""
                 )
 
@@ -67,7 +67,7 @@ class StaticfyTest(unittest.TestCase):
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="/static/images/staticfy.jpg" />\n"""
                            """<img data-url="images/staticfy.jpg" />\n"""
-                           """<link rel="stylesheet" href="css/style.css" />\n"""
+                           """<link rel="stylesheet" href="../css/style.css" />\n"""
                            """<script src="{{ url_for('static', filename='js/script.js') }}">alert("hello world")</script>\n"""
                            )
         self.assertEqual(res, expected_result)
@@ -118,6 +118,18 @@ class StaticfyTest(unittest.TestCase):
                            """<img data-url="images/staticfy.jpg" />\n"""
                            """<link rel="stylesheet" href="{% static 'admin/css/style.css' %}" />\n"""
                            """<script src="{% static 'admin/js/script.js' %}">alert("hello world")</script>\n"""
+                           )
+        self.assertEqual(result, expected_result)
+
+    def test_replace_relative_links(self):
+        """Testing replace_relative_links."""
+        result = staticfy(self.filename, framework='django')
+
+        expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
+                           """<img src="{% static 'images/staticfy.jpg' %}" />\n"""
+                           """<img data-url="images/staticfy.jpg" />\n"""
+                           """<link rel="stylesheet" href="{% static 'css/style.css' %}" />\n"""
+                           """<script src="{% static 'js/script.js' %}">alert("hello world")</script>\n"""
                            )
         self.assertEqual(result, expected_result)
 

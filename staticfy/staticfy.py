@@ -31,7 +31,10 @@ def get_asset_location(element, attr):
     asset_location = re.match(r'^/?(static)?/?(.*)', element[attr],
                               re.IGNORECASE)
 
-    return asset_location.group(2)
+    # replace relative links i.e (../)
+    asset_location = asset_location.group(2).replace('../', '')
+
+    return asset_location
 
 
 def transform(matches, framework, namespace, static_endpoint):
@@ -176,7 +179,6 @@ def main():
 
     for f in files:
         try:
-            # import pdb; pdb.set_trace()
             if os.path.isfile(f) and f.endswith(('htm', 'html')):
                 staticfied = staticfy(f, static_endpoint=static_endpoint,
                                       add_tags=add_tags, exc_tags=exc_tags,
