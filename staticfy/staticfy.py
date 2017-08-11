@@ -7,7 +7,7 @@ import os
 import errno
 import argparse
 import json
-from staticfy.config import frameworks
+from .config import frameworks
 
 
 def makedir(path):
