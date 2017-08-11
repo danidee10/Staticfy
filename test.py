@@ -5,6 +5,18 @@ import unittest
 import os
 from staticfy.staticfy import staticfy
 
+class DummyParser():
+    """
+    Empty class that simulates the parser in the main program.
+
+    This was done so multiple arguments can be passed as an object.
+    """
+    framework = None
+    namespace = None
+    static_endpoint = None
+    exc_tags = None
+    add_tags = None
+
 
 class StaticfyTest(unittest.TestCase):
     """Test Case."""
@@ -23,9 +35,13 @@ class StaticfyTest(unittest.TestCase):
         with open(cls.filename, 'w+') as f:
             f.write(data)
 
+    def setUp(self):
+        """Create a fresh DummyParser for each test case."""
+        self.args = DummyParser()
+
     def test_normal_staticfy(self):
         """Testing Flask => {{ url_for('static', filename='css/style.css') }}."""
-        result = staticfy(self.filename)
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
@@ -38,7 +54,8 @@ class StaticfyTest(unittest.TestCase):
 
     def test_static_endpoint(self):
         """Testing Static endpoint."""
-        result = staticfy(self.filename, static_endpoint='my_static')
+        self.args.static_endpoint = 'my_static'
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{{ url_for('my_static', filename='images/staticfy.jpg') }}" />\n"""
@@ -50,7 +67,8 @@ class StaticfyTest(unittest.TestCase):
 
     def test_additional_tags(self):
         """Testing additional tags."""
-        result = staticfy(self.filename, add_tags={'img': 'data-url'})
+        self.args.add_tags = {'img': 'data-url'}
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
@@ -62,7 +80,8 @@ class StaticfyTest(unittest.TestCase):
 
     def test_exclusive_tags(self):
         """Testing exclusive tags."""
-        res = staticfy(self.filename, exc_tags={'link': 'href', 'img': 'src'})
+        self.args.exc_tags = {'link': 'href', 'img': 'src'}
+        res = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="/static/images/staticfy.jpg" />\n"""
@@ -74,7 +93,7 @@ class StaticfyTest(unittest.TestCase):
 
     def test_cleanup_html(self):
         """Testing HTML cleanup."""
-        result = staticfy(self.filename)
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{{ url_for('static', filename='images/staticfy.jpg') }}" />\n"""
@@ -87,7 +106,8 @@ class StaticfyTest(unittest.TestCase):
 
     def test_django_project(self):
         """Testing Django => {% static 'css/style.css' %}."""
-        result = staticfy(self.filename, framework='django')
+        self.args.framework = 'django'
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{% static 'images/staticfy.jpg' %}" />\n"""
@@ -99,7 +119,8 @@ class StaticfyTest(unittest.TestCase):
 
     def test_laravel_project(self):
         """Testing Laravel => {{ URL::asset('css/bootstrap.min.css') }}."""
-        result = staticfy(self.filename, framework='laravel')
+        self.args.framework = 'laravel'
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{{ URL::asset('images/staticfy.jpg') }}" />\n"""
@@ -111,7 +132,9 @@ class StaticfyTest(unittest.TestCase):
 
     def test_namespace(self):
         """Testing namespace."""
-        result = staticfy(self.filename, framework='django', namespace='admin')
+        self.args.framework = 'django'
+        self.args.namespace = 'admin'
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{% static 'admin/images/staticfy.jpg' %}" />\n"""
@@ -123,7 +146,8 @@ class StaticfyTest(unittest.TestCase):
 
     def test_replace_relative_links(self):
         """Testing replace_relative_links."""
-        result = staticfy(self.filename, framework='django')
+        self.args.framework = 'django'
+        result = staticfy(self.filename, args=self.args)
 
         expected_result = ("""<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" />\n"""
                            """<img src="{% static 'images/staticfy.jpg' %}" />\n"""
@@ -134,7 +158,7 @@ class StaticfyTest(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_filenotfound_exception(self):
-        self.assertRaises(IOError, staticfy, 'Invalid file')
+        self.assertRaises(IOError, staticfy, 'Invalid html file', args=self.args)
 
     @classmethod
     def tearDownClass(cls):

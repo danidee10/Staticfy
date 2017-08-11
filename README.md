@@ -30,6 +30,12 @@ staticfy staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'
 
  `--static-endpoint` and `--add-tags` are optional
 
+By default Staticfy writes to `stdout` but you can specify an output file with `-o` or `--output`
+
+```bash
+staticfy staticfy.html -o new.html
+```
+
 ### Before Staticfying
 ![alt tag](assets/before.png)
 ---------------------------------------------------------------------------------------------------------------------------------
@@ -39,14 +45,6 @@ staticfy staticfy.html --static-endpoint=static --add-tags='{"img": "data-url"}'
 Notice how it preserves the font-awesome css link at the top of the file?, external resources (images, scripts, font-awesome, google-fonts, bootstrap files, disqus e.t.c) which aren't hosted locally with your website won't be staticfied. Staticfy also accepts an optional argument `--static-endpoint` in case you're not using the default static endpoint.
 
 Staticy also preserves the indentation and formatting of any html file given to it, so your html file(s) are still look the same way and are still readablebe just the way they were before you staticfied them.
-
-# Batch operation
-Staticfy is also smart enough to know if it was given a single file or a directory to work with, if you want to staticfy all html files in a directory, just give staticfy the name of the directory that's all!.
-staticfy will search through the specified folder and staticfy all the (html | htm) files it finds, this saves you more time if you want to staticfy a bunch of files at once.
-
-```bash
-staticfy html_files
-```
 
 # Additional tags and attributes
 By default staticfy identifies and staticfies the following tags:

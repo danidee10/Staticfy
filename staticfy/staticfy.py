@@ -1,4 +1,5 @@
 """Staticfy.py."""
+
 from bs4 import BeautifulSoup
 import sys
 import re
@@ -6,7 +7,7 @@ import os
 import errno
 import argparse
 import json
-from .__config__ import frameworks
+from staticfy.config import frameworks
 
 
 def makedir(path):
@@ -24,14 +25,14 @@ def get_asset_location(element, attr):
     """
     Get Asset Location.
 
-    Removes leading slash e.g '/static/images.jpg' ==> static/images.jpg
+    Remove leading slash e.g '/static/images.jpg' ==> static/images.jpg
     Also, if the url is also prefixed with static, it would be removed.
         e.g static/image.jpg ==> image.jpg
     """
     asset_location = re.match(r'^/?(static)?/?(.*)', element[attr],
                               re.IGNORECASE)
 
-    # replace relative links i.e (../)
+    # replace relative links i.e (../../static)
     asset_location = asset_location.group(2).replace('../', '')
 
     return asset_location
@@ -51,9 +52,14 @@ def transform(matches, framework, namespace, static_endpoint):
         for element in elements:
             asset_location = get_asset_location(element, attribute)
 
-            res = (attribute, element[attribute], frameworks[framework] %
-                   {'static_endpoint': static_endpoint, 'namespace': namespace,
-                    'asset_location': asset_location})
+            # string substitution
+            sub_dict = {
+                'static_endpoint': static_endpoint, 'namespace': namespace,
+                'asset_location': asset_location
+                }
+            transformed_string = frameworks[framework] % sub_dict
+
+            res = (attribute, element[attribute], transformed_string)
             transformed.append(res)
 
     return transformed
@@ -63,8 +69,8 @@ def get_elements(html_file, tags):
     """
     Extract all the elements we're interested in.
 
-    Returns a list of dicts with the attribute as the key and matching tags as
-    a list
+    Returns a list of dicts with the attribute as the key and matching
+    tags (in a list) as the value.
     """
     with open(html_file) as f:
         document = BeautifulSoup(f, 'html.parser')
@@ -80,13 +86,41 @@ def get_elements(html_file, tags):
         return all_tags
 
 
-def staticfy(html_file, add_tags={}, exc_tags={}, framework='flask',
-             namespace='', static_endpoint='static'):
+def replace_lines(html_file, transformed):
+    """Replace lines in the old file with the transformed lines."""
+    result = []
+    with open(html_file, 'r') as input_file:
+        for line in input_file:
+            # replace all single quotes with double quotes
+            line = re.sub(r'\'', '"', line)
+
+            for attr, value, new_link in transformed:
+                if attr in line and value in line:
+
+                    # replace old link with new staticfied link
+                    new_line = line.replace(value, new_link)
+
+                    result.append(new_line)
+                    break
+            else:
+                result.append(line)
+
+        return ''.join(result)
+
+
+def staticfy(html_file, args=argparse.ArgumentParser()):
     """
     Staticfy method.
 
     Loop through each line of the file and replaces the old links
     """
+    # unpack arguments
+    static_endpoint = args.static_endpoint or 'static'
+    framework = args.framework or os.getenv('STATICFY_FRAMEWORK', 'flask')
+    add_tags = args.add_tags or {}
+    exc_tags = args.exc_tags or {}
+    namespace = args.namespace or {}
+
     # default tags
     tags = {('img', 'src'), ('link', 'href'), ('script', 'src')}
 
@@ -96,7 +130,6 @@ def staticfy(html_file, add_tags={}, exc_tags={}, framework='flask',
 
     # remove tags if any was specified
     exc_tags = {(tag, attr) for tag, attr in exc_tags.items()}
-
     tags = tags - exc_tags
 
     # get elements we're interested in
@@ -105,55 +138,36 @@ def staticfy(html_file, add_tags={}, exc_tags={}, framework='flask',
     # transform old links to new links
     transformed = transform(matches, framework, namespace, static_endpoint)
 
-    # Replace lines
-    result = []
-    with open(html_file, 'r') as input_file:
-        for line in input_file:
-            # replace all single quotes with double quotes
-            new_line = re.sub(r'\'', '"', line)
-
-            for attr, value, new_link in transformed:
-                if attr in new_line and value in new_line:
-
-                    # replace old link with new staticfied link
-                    new_line = new_line.replace(value, new_link)
-
-                    # print(new_line) --verbose
-                    result.append(new_line)
-                    break
-            else:
-                result.append(new_line)
-
-        return ''.join(result)
+    return replace_lines(html_file, transformed)
 
 
-def file_ops(staticfied, filename):
-    """Recreate the file and place it in the 'staticfy' directory."""
-    # create the staticfy and the appropriate template folder
-    out_file = os.path.join('staticfy', filename)
-    makedir(os.path.dirname(out_file))
+def file_ops(staticfied, args):
+    """Write to stdout or a file"""
+    destination = args.o or args.output
 
-    with open(out_file, 'w') as f:
-        f.write(staticfied)
-
-    print('staticfied \033[94m{} ==> \033[92m{}\033[0m\n'.
-          format(filename, out_file))
+    if destination:
+        with open(destination, 'w') as file:
+            file.write(staticfied)
+    else:
+        print(staticfied)
 
 
 def parse_cmd_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('file', type=str, nargs='+',
-                        help='Filename or directory to be staticfied')
+    parser.add_argument('file', type=str,
+                        help='Filename to be staticfied')
     parser.add_argument('--static-endpoint',
-                        help='static endpoint which is "static" by default')
+                        help='Static endpoint which is "static" by default')
     parser.add_argument('--add-tags', type=str,
-                        help='additional tags to staticfy')
+                        help='Additional tags to staticfy')
     parser.add_argument('--exc-tags', type=str, help='tags to exclude')
     parser.add_argument('--framework', type=str,
-                        help='Web Framework (default: flask)')
+                        help='Web Framework: Defaults to Flask')
     parser.add_argument('--namespace', type=str,
-                        help='string to prefix url with')
+                        help='String to prefix url with')
+    parser.add_argument('-o', type=str, help='Specify output file')
+    parser.add_argument('--output', type=str, help='Specify output file')
     args = parser.parse_args()
 
     return args
@@ -162,43 +176,18 @@ def parse_cmd_arguments():
 def main():
     """Main method."""
     args = parse_cmd_arguments()
-    files = args.file
-    static_endpoint = args.static_endpoint  # if None is supplied
-    add_tags = args.add_tags or '{}'
-    exc_tags = args.exc_tags or '{}'
-    framework = args.framework or os.getenv('STATICFY_FRAMEWORK', 'flask')
-    namespace = args.namespace or ''
+    html_file = args.file
 
     try:
-        add_tags = json.loads(add_tags)
-        exc_tags = json.loads(exc_tags)
+        json.loads(args.add_tags or '{}')
+        json.loads(args.exc_tags or '{}')
     except ValueError:
         print('\033[91m' + 'Invalid json string: please provide a valid json '
               'string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
         sys.exit(1)
 
-    for f in files:
-        try:
-            if os.path.isfile(f) and f.endswith(('htm', 'html')):
-                staticfied = staticfy(f, static_endpoint=static_endpoint,
-                                      add_tags=add_tags, exc_tags=exc_tags,
-                                      framework=framework, namespace=namespace)
-                file_ops(staticfied, f)
-            else:
-                # it's a directory so loop through and staticfy
-                for html_file in os.listdir(f):
-                    if html_file.endswith(('htm', 'html')):
-                        temp_filename = os.path.join(f, html_file)
-                        staticfied = staticfy(temp_filename, add_tags=add_tags,
-                                              static_endpoint=static_endpoint,
-                                              exc_tags=exc_tags,
-                                              framework=framework,
-                                              namespace=namespace)
-                        file_ops(staticfied, temp_filename)
-
-        except IOError:
-            print('\033[91m' + 'Unable to read/find the specified file or '
-                               'directory' + '\033[0m')
+    staticfied = staticfy(html_file, args=args)
+    file_ops(staticfied, args=args)
 
 
 if __name__ == '__main__':
