@@ -128,13 +128,13 @@ export STATICFY_FRAMEWORK=django
 If you specify a framework that isn't found, staticfy would cry and gracefully fall back to it's flask roots.
 
 # Tests
-The tests are located in the `test.py` file and can be run with
+The tests are located in the `test.py` file and can be run with:
 
 `python3 test.py`
 
 # Python support
 Staticfy supports both python2 and python3
-(python 2.7 >)
+**(python 2.7 >)**
 
 # Requirements and 3rd party stuff
 Beautiful soup 4
