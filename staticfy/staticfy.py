@@ -69,8 +69,8 @@ def get_elements(html_file, tags):
     """
     Extract all the elements we're interested in.
 
-    Returns a list of dicts with the attribute as the key and matching
-    tags (in a list) as the value.
+    Returns a list of tuples with the attribute as first item
+    and the list of elements as the second item.
     """
     with open(html_file) as f:
         document = BeautifulSoup(f, 'html.parser')
