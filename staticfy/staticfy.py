@@ -1,13 +1,16 @@
 """Staticfy.py."""
 
-from bs4 import BeautifulSoup
 import sys
 import re
 import os
 import errno
 import argparse
 import json
-from .config import frameworks
+
+from bs4 import BeautifulSoup
+
+from plugins.django import transform as django
+from config import frameworks
 
 
 def makedir(path):
@@ -72,8 +75,11 @@ def get_elements(html_file, tags):
     Returns a list of tuples with the attribute as first item
     and the list of elements as the second item.
     """
-    with open(html_file) as f:
-        document = BeautifulSoup(f, 'html.parser')
+    with open(html_file) as file:
+
+        file = django(file)
+
+        document = BeautifulSoup(''.join(file), 'html.parser')
 
         def condition(tag, attr):
             # Don't include external links
@@ -83,29 +89,28 @@ def get_elements(html_file, tags):
         all_tags = [(attr, document.find_all(condition(tag, attr)))
                     for tag, attr in tags]
 
-        return all_tags
+        return all_tags, file
 
 
 def replace_lines(html_file, transformed):
     """Replace lines in the old file with the transformed lines."""
     result = []
-    with open(html_file, 'r') as input_file:
-        for line in input_file:
-            # replace all single quotes with double quotes
-            line = re.sub(r'\'', '"', line)
+    for line in html_file:
+        # replace all single quotes with double quotes
+        line = re.sub(r'\'', '"', line)
 
-            for attr, value, new_link in transformed:
-                if attr in line and value in line:
+        for attr, value, new_link in transformed:
+            if attr in line and value in line:
 
-                    # replace old link with new staticfied link
-                    new_line = line.replace(value, new_link)
+                # replace old link with new staticfied link
+                new_line = line.replace(value, new_link)
 
-                    result.append(new_line)
-                    break
-            else:
-                result.append(line)
+                result.append(new_line)
+                break
+        else:
+            result.append(line)
 
-        return ''.join(result)
+    return ''.join(result)
 
 
 def staticfy(html_file, args=argparse.ArgumentParser()):
@@ -133,7 +138,7 @@ def staticfy(html_file, args=argparse.ArgumentParser()):
     tags = tags - exc_tags
 
     # get elements we're interested in
-    matches = get_elements(html_file, tags)
+    matches, html_file = get_elements(html_file, tags)
 
     # transform old links to new links
     transformed = transform(matches, framework, namespace, static_endpoint)

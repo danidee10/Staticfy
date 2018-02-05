@@ -5,6 +5,7 @@ import unittest
 import os
 from staticfy.staticfy import staticfy
 
+
 class DummyParser():
     """
     Empty class that simulates the parser in the main program.
