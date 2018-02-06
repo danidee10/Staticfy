@@ -9,8 +9,8 @@ import json
 
 from bs4 import BeautifulSoup
 
-from plugins.django import transform as django
-from config import frameworks
+from .plugins.django_posthtml import transform as django_posthtml
+from .config import frameworks
 
 
 def makedir(path):
@@ -35,8 +35,9 @@ def get_asset_location(element, attr):
     asset_location = re.match(r'^/?(static)?/?(.*)', element[attr],
                               re.IGNORECASE)
 
-    # replace relative links i.e (../../static)
+    # replace relative links i.e (../../static) or (./)
     asset_location = asset_location.group(2).replace('../', '')
+    asset_location = asset_location.replace('./', '')
 
     return asset_location
 
@@ -77,7 +78,7 @@ def get_elements(html_file, tags):
     """
     with open(html_file) as file:
 
-        file = django(file)
+        file = django_posthtml(file)
 
         document = BeautifulSoup(''.join(file), 'html.parser')
 

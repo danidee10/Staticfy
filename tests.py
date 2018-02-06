@@ -3,7 +3,7 @@
 
 import unittest
 import os
-from staticfy.staticfy import staticfy
+from staticfy import staticfy
 
 
 class DummyParser():
