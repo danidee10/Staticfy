@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='Staticfy',
       version='1.7',
@@ -10,7 +10,7 @@ setup(name='Staticfy',
       author_email='osaetindaniel@gmail.com',
       license='GPL',
       scripts = ['bin/staticfy'],
-      packages=['staticfy'],
+      packages=find_packages(),
       install_requires=[
           'beautifulsoup4',
       ],

@@ -9,8 +9,8 @@ import json
 
 from bs4 import BeautifulSoup
 
-from plugins.django_posthtml import transform as django_posthtml
-from config import frameworks
+from .plugins.django_posthtml import transform as django_posthtml
+from .config import frameworks
 
 
 def makedir(path):
