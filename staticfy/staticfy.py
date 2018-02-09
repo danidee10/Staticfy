@@ -1,13 +1,16 @@
 """Staticfy.py."""
 
-from bs4 import BeautifulSoup
-import sys
 import re
 import os
-import errno
-import argparse
+import sys
 import json
-from .config import frameworks
+import errno
+import codecs
+import argparse
+
+from bs4 import BeautifulSoup
+
+from config import frameworks
 
 
 def makedir(path):
@@ -89,7 +92,7 @@ def get_elements(html_file, tags):
 def replace_lines(html_file, transformed):
     """Replace lines in the old file with the transformed lines."""
     result = []
-    with open(html_file, 'r') as input_file:
+    with codecs.open(html_file, 'r', 'utf-8') as input_file:
         for line in input_file:
             # replace all single quotes with double quotes
             line = re.sub(r'\'', '"', line)
