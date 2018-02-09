@@ -189,7 +189,7 @@ def main():
               'string e.g {}'.format('\'{"img": "data-url"}\'') + '\033[0m')
         sys.exit(1)
 
-    staticfied = staticfy(html_file, args=args)
+    staticfied = staticfy(html_file, args=args).encode('utf-8')
     file_ops(staticfied, args=args)
 
 
