@@ -10,7 +10,7 @@ import argparse
 
 from bs4 import BeautifulSoup
 
-from config import frameworks
+from .config import frameworks
 
 
 def makedir(path):
