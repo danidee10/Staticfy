@@ -1,5 +1,22 @@
 #! /usr/bin/env/ python
 
+import yaml
+
 from staticfy import main
 
-main()
+
+def load_config():
+    """Load and Parse staticfy.yaml file."""
+    try:
+        with open('staticfy.yaml') as yaml_config_file:
+            config = yaml.load(yaml_config_file)
+            return config
+    except FileNotFoundError:
+        print(
+            'Warning: staticfy.yaml file was not found in the current directory'
+        )
+        return {'plugins': []}
+
+
+config = load_config()
+main(config)

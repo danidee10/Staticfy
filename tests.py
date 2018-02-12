@@ -158,8 +158,12 @@ class StaticfyTest(unittest.TestCase):
                            )
         self.assertEqual(result, expected_result)
 
-    def test_filenotfound_exception(self):
-        self.assertRaises(IOError, staticfy, 'Invalid html file', args=self.args)
+    def test_nonexistent_html_file(self):
+        """
+        An IOError should be raised
+        if we try to staticfy a nonexistent file.
+        """
+        self.assertRaises(IOError, staticfy, 'not_found', args=self.args)
 
     @classmethod
     def tearDownClass(cls):
